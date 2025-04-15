@@ -21,8 +21,6 @@ void applicationInit();
 
 void appButtonInit();
 
-void executeButtonPollingRoutine();
-
 void greenLEDInit();
 
 void redLEDInit();

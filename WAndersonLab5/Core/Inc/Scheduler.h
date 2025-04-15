@@ -15,9 +15,8 @@ void addSchedulerEvent(uint32_t event);
 
 void removeSchedulerEvent(uint32_t removeEvent);
 
-#define LED_TOGGLE_EVENT (1 << 0)
-#define DELAY_EVENT (1 << 1)
-#define POLLING_EVENT (1 << 2)
+#define DELAY_EVENT (1 << 0)
+#define DEVICE_ID_AND_TEMP_EVENT (1 << 1)
 
 
 #endif /* SCHEDULER_H_ */
