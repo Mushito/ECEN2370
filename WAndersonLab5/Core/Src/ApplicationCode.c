@@ -37,9 +37,6 @@ void appButtonInit(){
     buttonInit();
 }
 
-void executeButtonPollingRoutine(){
-}
-
 void EXTI0_IRQHandler(){
 	HAL_NVIC_DisableIRQ(EXTI0_IRQn);
 	__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_0);
