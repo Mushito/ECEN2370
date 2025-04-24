@@ -331,6 +331,105 @@ void visualDemo(void)
 	LCD_DisplayChar(140,160,'d');
 }
 
+void LCD_DrawMenuScreen(void) {
+    LCD_Clear(0, COLOR_BG);
+
+    LCD_SetTextColor(LCD_COLOR_BLACK);
+    LCD_SetFont(&Font16x24);
+    LCD_DisplayChar(50, 40, '1');
+    LCD_DisplayChar(50, 60, '-');
+    LCD_DisplayChar(50, 80, 'P');
+    LCD_DisplayChar(50, 100, 'L');
+    LCD_DisplayChar(50, 120, 'A');
+    LCD_DisplayChar(50, 140, 'Y');
+    LCD_DisplayChar(50, 160, 'E');
+    LCD_DisplayChar(50, 180, 'R');
+
+    LCD_DisplayChar(170, 40, '2');
+    LCD_DisplayChar(170, 60, '-');
+    LCD_DisplayChar(170, 80, 'P');
+    LCD_DisplayChar(170, 100, 'L');
+    LCD_DisplayChar(170, 120, 'A');
+    LCD_DisplayChar(170, 140, 'Y');
+    LCD_DisplayChar(170, 160, 'E');
+    LCD_DisplayChar(170, 180, 'R');
+
+    LCD_Draw_Vertical_Line(120, 40, 240, LCD_COLOR_BLACK);
+}
+
+void LCD_DrawGameBoard(int board[6][7]) {
+    LCD_Clear(0, COLOR_BG);
+
+    for (int row = 0; row < BOARD_ROWS; row++) {
+        for (int col = 0; col < BOARD_COLS; col++) {
+            int x = BOARD_X_START + col * (2 * CELL_RADIUS + CELL_SPACING);
+            int y = BOARD_Y_START + row * (2 * CELL_RADIUS + CELL_SPACING);
+            uint16_t color = COLOR_BG;
+
+            if (board[row][col] == 1) color = COLOR_PLAYER1;
+            else if (board[row][col] == 2) color = COLOR_PLAYER2;
+
+            LCD_Draw_Circle_Fill(x, y, CELL_RADIUS, COLOR_GRID);     // background
+            LCD_Draw_Circle_Fill(x, y, CELL_RADIUS - 3, color);       //draw coin
+        }
+    }
+}
+
+
+void LCD_DrawGameOverScreen(int winner, int redWins, int yellowWins, int elapsedTime) {
+    LCD_Clear(0, COLOR_BG);
+    LCD_SetTextColor(LCD_COLOR_BLACK);
+    LCD_SetFont(&Font16x24);
+
+    if (winner == 1) {
+        LCD_DisplayChar(40, 40, 'R');
+        LCD_DisplayChar(40, 60, 'E');
+        LCD_DisplayChar(40, 80, 'D');
+        LCD_DisplayChar(40, 100, ' ');
+        LCD_DisplayChar(40, 120, 'W');
+        LCD_DisplayChar(40, 140, 'I');
+        LCD_DisplayChar(40, 160, 'N');
+        LCD_DisplayChar(40, 180, 'S');
+    } else if (winner == 2) {
+        LCD_DisplayChar(40, 40, 'Y');
+        LCD_DisplayChar(40, 60, 'E');
+        LCD_DisplayChar(40, 80, 'L');
+        LCD_DisplayChar(40, 100, 'L');
+        LCD_DisplayChar(40, 120, 'O');
+        LCD_DisplayChar(40, 140, 'W');
+        LCD_DisplayChar(40, 160, ' ');
+        LCD_DisplayChar(40, 180, 'W');
+        LCD_DisplayChar(40, 200, 'I');
+        LCD_DisplayChar(40, 220, 'N');
+        LCD_DisplayChar(40, 240, 'S');
+    } else {
+        LCD_DisplayChar(40, 40, 'T');
+        LCD_DisplayChar(40, 60, 'I');
+        LCD_DisplayChar(40, 80, 'E');
+    }
+
+    char buffer[32];
+    sprintf(buffer, "Red: %d  Yellow: %d", redWins, yellowWins);
+    for (int i = 0; buffer[i]; i++) {
+        LCD_DisplayChar(200, 40 + i * 16, buffer[i]);
+    }
+
+	LCD_DisplayChar(200, 200, 'R');
+	LCD_DisplayChar(200, 220, 'E');
+	LCD_DisplayChar(200, 240, 'S');
+	LCD_DisplayChar(200, 260, 'T');
+	LCD_DisplayChar(200, 280, 'A');
+	LCD_DisplayChar(200, 300, 'R');
+	LCD_DisplayChar(200, 320, 'T');
+}
+
+void LCD_DrawFloatingCoin(int column, uint16_t color) {
+    int x = BOARD_X_START + column * (2 * CELL_RADIUS + CELL_SPACING);
+    int y = BOARD_Y_START - 30;
+
+    LCD_Draw_Circle_Fill(x, y, CELL_RADIUS, color);
+}
+
 /**
   * @brief  This function is executed in case of error occurrence.
   * @retval None

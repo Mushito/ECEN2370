@@ -22,6 +22,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "ApplicationCode.h"
+#include "LCD_Driver.h"
+#include "stmpe811.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -62,6 +64,41 @@ static void MX_RNG_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_SPI5_Init(void);
 static void MX_I2C3_Init(void);
+
+////////////////TESTING////////////////////
+
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
+
+
+int board[6][7] = {0};
+int currentPlayer = 1;
+int onePlayerMode = 0;
+int gameOver = 0;
+int winner = 0;
+
+int redWins = 0;
+int yellowWins = 0;
+int elapsedTime = 0;
+
+void placeCoin(int board[6][7], int col, int player) {
+    for (int row = 5; row >= 0; row--) {
+        if (board[row][col] == 0) {
+            board[row][col] = player;
+            break;
+        }
+    }
+}
+
+int checkWinOrTie(int board[6][7], int* winnerOut) {
+    // Placeholder logic – always return false (no game over)
+    *winnerOut = 0;
+    return 0;
+}
+
+///////////////////END TESTING////////////////
+
+
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -107,20 +144,57 @@ int main(void)
   MX_I2C3_Init();
   /* USER CODE BEGIN 2 */
   ApplicationInit(); // Initializes the LCD functionality
-  LCD_Visual_Demo();
+
   HAL_Delay(5000);
   /* USER CODE END 2 */
-#if COMPILE_TOUCH_FUNCTIONS == 1 // This block will need to be deleted
-  LCD_Touch_Polling_Demo(); // This function Will not return
-#endif
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
+  /////////////////////////// TEST DRAW FUNCTIONS////////////////////////////////
+  LCD_DrawMenuScreen();
+  STMPE811_TouchData touch;
+  while (1) {
+      if (returnTouchStateAndLocation(&touch) == STMPE811_State_Pressed) {
+          if (touch.x < 120) {
+              onePlayerMode = 1;
+          } else {
+              onePlayerMode = 0;
+          }
+          break;
+      }
   }
+
+  LCD_DrawGameBoard(board);
+      int currentColumn = 3;
+
+      while (!gameOver) {
+          LCD_DrawGameBoard(board);
+          uint16_t color;
+          if (currentPlayer == 1) {
+              color = COLOR_PLAYER1;
+          } else {
+              color = COLOR_PLAYER2;
+          }
+          LCD_DrawFloatingCoin(currentColumn, color);
+
+          if (returnTouchStateAndLocation(&touch) == STMPE811_State_Pressed) {
+              if (touch.x < 120) currentColumn = MAX(0, currentColumn - 1);
+              else currentColumn = MIN(6, currentColumn + 1);
+              HAL_Delay(200);
+          }
+
+          if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_RESET) {
+              placeCoin(board, currentColumn, currentPlayer);  // NOT YET DEFINED!!!!
+              gameOver = checkWinOrTie(board, &winner);     //ALSO NOT YET DEFINED!!!!
+              currentPlayer = (currentPlayer == 1) ? 2 : 1;
+              HAL_Delay(200);
+          }
+      }
+
+      LCD_DrawGameOverScreen(winner, redWins, yellowWins, elapsedTime);
+
+      while (1);
+////////////////END TEST///////////////////////////////
   /* USER CODE END 3 */
 }
 

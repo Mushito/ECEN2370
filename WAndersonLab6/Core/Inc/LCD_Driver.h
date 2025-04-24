@@ -12,6 +12,7 @@
 #include "ili9341.h"
 #include "fonts.h"
 #include "stmpe811.h"
+#include <stdio.h>
 
 #define COMPILE_TOUCH_FUNCTIONS COMPILE_TOUCH
 #define TOUCH_INTERRUPT_ENABLED COMPILE_TOUCH_INTERRUPT_SUPPORT
@@ -32,6 +33,20 @@
 #define LCD_COLOR_GREEN         0x07E0
 #define LCD_COLOR_CYAN          0x7FFF
 #define LCD_COLOR_YELLOW        0xFFE0
+
+
+#define COLOR_PLAYER1   LCD_COLOR_RED
+#define COLOR_PLAYER2   LCD_COLOR_YELLOW
+#define COLOR_GRID      LCD_COLOR_BLUE
+#define COLOR_BG        LCD_COLOR_WHITE
+#define COLOR_PREVIEW   LCD_COLOR_GREEN
+
+#define CELL_RADIUS 14
+#define CELL_SPACING 4
+#define BOARD_COLS 7
+#define BOARD_ROWS 6
+#define BOARD_X_START 20
+#define BOARD_Y_START 60
 
 /* Timing configuration from datahseet
   HSYNC=10 (9+1)
@@ -73,6 +88,14 @@ void LCD_Error_Handler(void);
 
 // Demo using provided functions
 void visualDemo(void);
+
+// GAME IMPLIMENTATION TIME:
+void Graphics_DrawMenu(void);
+void Graphics_DrawBoard(int board[6][7]);
+void Graphics_DrawCoinPreview(int col, uint16_t color);
+void Graphics_DrawGameOverScreen(int winner, int redScore, int yellowScore, int seconds);
+void Graphics_ClearScreen(void);                      // Clear to white or other background
+
 
 void LCD_Error_Handler(void);
 
