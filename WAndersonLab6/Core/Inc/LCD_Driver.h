@@ -88,6 +88,12 @@ void LCD_Error_Handler(void);
 
 // Demo using provided functions
 void visualDemo(void);
+//////////////////////////////// USER DECLARED FUNCTIONS////////////////////////
+void LCD_DrawMenuScreen(void);
+void LCD_DrawGameBoard(int board[6][7]);
+void LCD_DrawFloatingCoin(int column, uint16_t color);
+void LCD_DrawGameOverScreen(int winner, int redWins, int yellowWins, int elapsedTime);
+////////////////
 
 // GAME IMPLIMENTATION TIME:
 void Graphics_DrawMenu(void);

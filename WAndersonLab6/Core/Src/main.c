@@ -24,6 +24,7 @@
 #include "ApplicationCode.h"
 #include "LCD_Driver.h"
 #include "stmpe811.h"
+#include "game_state.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -76,26 +77,11 @@ int currentPlayer = 1;
 int onePlayerMode = 0;
 int gameOver = 0;
 int winner = 0;
+int currentColumn = 3;
 
 int redWins = 0;
 int yellowWins = 0;
 int elapsedTime = 0;
-
-void placeCoin(int board[6][7], int col, int player) {
-    for (int row = 5; row >= 0; row--) {
-        if (board[row][col] == 0) {
-            board[row][col] = player;
-            break;
-        }
-    }
-}
-
-int checkWinOrTie(int board[6][7], int* winnerOut) {
-    // Placeholder logic – always return false (no game over)
-    *winnerOut = 0;
-    return 0;
-}
-
 ///////////////////END TESTING////////////////
 
 
@@ -165,35 +151,27 @@ int main(void)
   }
 
   LCD_DrawGameBoard(board);
-      int currentColumn = 3;
 
-      while (!gameOver) {
-          LCD_DrawGameBoard(board);
-          uint16_t color;
-          if (currentPlayer == 1) {
-              color = COLOR_PLAYER1;
-          } else {
-              color = COLOR_PLAYER2;
-          }
-          LCD_DrawFloatingCoin(currentColumn, color);
+  while (!gameOver) {
+	  LCD_DrawGameBoard(board);
+	  uint16_t color;
+	  if (currentPlayer == 1) {
+		  color = COLOR_PLAYER1;
+	  } else {
+		  color = COLOR_PLAYER2;
+	  }
+	  LCD_DrawFloatingCoin(currentColumn, color);
 
-          if (returnTouchStateAndLocation(&touch) == STMPE811_State_Pressed) {
-              if (touch.x < 120) currentColumn = MAX(0, currentColumn - 1);
-              else currentColumn = MIN(6, currentColumn + 1);
-              HAL_Delay(200);
-          }
+	  if (returnTouchStateAndLocation(&touch) == STMPE811_State_Pressed) {
+		  if (touch.x < 120) currentColumn = MAX(0, currentColumn - 1);
+		  else currentColumn = MIN(6, currentColumn + 1);
+		  HAL_Delay(200);
+	  }
+  }
 
-          if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_RESET) {
-              placeCoin(board, currentColumn, currentPlayer);  // NOT YET DEFINED!!!!
-              gameOver = checkWinOrTie(board, &winner);     //ALSO NOT YET DEFINED!!!!
-              currentPlayer = (currentPlayer == 1) ? 2 : 1;
-              HAL_Delay(200);
-          }
-      }
+  LCD_DrawGameOverScreen(winner, redWins, yellowWins, elapsedTime);
 
-      LCD_DrawGameOverScreen(winner, redWins, yellowWins, elapsedTime);
-
-      while (1);
+  while (1);
 ////////////////END TEST///////////////////////////////
   /* USER CODE END 3 */
 }
@@ -544,9 +522,12 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pins : B1_Pin MEMS_INT1_Pin MEMS_INT2_Pin TP_INT1_Pin */
   GPIO_InitStruct.Pin = B1_Pin|MEMS_INT1_Pin|MEMS_INT2_Pin|TP_INT1_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_EVT_RISING;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI0_IRQn); //////////ENABLE NVIC FOR BUTTON
 
   /*Configure GPIO pin : ACP_RST_Pin */
   GPIO_InitStruct.Pin = ACP_RST_Pin;
@@ -654,6 +635,27 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+	static uint32_t lastPressTime = 0;
+	if (HAL_GetTick() - lastPressTime < 200) return;
+	lastPressTime = HAL_GetTick();
+
+    if (GPIO_Pin == GPIO_PIN_0) {
+        int placedRow = placeCoin(board, currentColumn, currentPlayer);
+        if (placedRow != -1) { // THIS CHECKS IF ROW IS FULL, IT WON'T PLACE THE COIN IF THE ROW IS FULL
+            int result = checkWinOrTie(board, placedRow, currentColumn, currentPlayer);
+            if (result == 1) {
+                winner = currentPlayer;
+                gameOver = 1;
+            } else if (result == 2) {
+                winner = 0; // TIE
+                gameOver = 1;
+            } else {
+                currentPlayer = (currentPlayer == 1) ? 2 : 1;
+            }
+        }
+    }
+}
 
 /* USER CODE END 4 */
 

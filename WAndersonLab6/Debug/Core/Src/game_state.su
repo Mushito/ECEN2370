@@ -1,0 +1,3 @@
+../Core/Src/game_state.c:10:5:placeCoin	32	static
+../Core/Src/game_state.c:20:12:countDirection	40	static
+../Core/Src/game_state.c:34:5:checkWinOrTie	48	static

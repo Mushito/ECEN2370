@@ -8,6 +8,9 @@
 #ifndef INC_GAME_STATE_H_
 #define INC_GAME_STATE_H_
 
+int placeCoin(int board[6][7], int col, int player);
+
+int checkWinOrTie(int board[6][7], int row, int col, int player);
 
 
 #endif /* INC_GAME_STATE_H_ */
