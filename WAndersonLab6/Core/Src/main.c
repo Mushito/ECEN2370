@@ -131,7 +131,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   ApplicationInit(); // Initializes the LCD functionality
 
-  HAL_Delay(5000);
+  HAL_Delay(1000);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -141,7 +141,7 @@ int main(void)
   STMPE811_TouchData touch;
   while (1) {
       if (returnTouchStateAndLocation(&touch) == STMPE811_State_Pressed) {
-          if (touch.x < 120) {
+          if (touch.y < 120) {
               onePlayerMode = 1;
           } else {
               onePlayerMode = 0;
@@ -150,7 +150,7 @@ int main(void)
       }
   }
 
-  LCD_DrawGameBoard(board);
+  LCD_Clear(0, COLOR_BG);
 
   while (!gameOver) {
 	  LCD_DrawGameBoard(board);
@@ -163,9 +163,9 @@ int main(void)
 	  LCD_DrawFloatingCoin(currentColumn, color);
 
 	  if (returnTouchStateAndLocation(&touch) == STMPE811_State_Pressed) {
-		  if (touch.x < 120) currentColumn = MAX(0, currentColumn - 1);
+		  if (touch.y < 120) currentColumn = MAX(0, currentColumn - 1);
 		  else currentColumn = MIN(6, currentColumn + 1);
-		  HAL_Delay(200);
+		  HAL_Delay(100);
 	  }
   }
 
@@ -521,13 +521,13 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pins : B1_Pin MEMS_INT1_Pin MEMS_INT2_Pin TP_INT1_Pin */
-  GPIO_InitStruct.Pin = B1_Pin|MEMS_INT1_Pin|MEMS_INT2_Pin|TP_INT1_Pin;
+  GPIO_InitStruct.Pin = B1_Pin;// DISABLE FUNCTIONALITY FOR INT1 & 2?
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI0_IRQn); //////////ENABLE NVIC FOR BUTTON
+  HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 0);///////////////////////////////////CONFIGURE NVIC//////////////////////////////////////////
+  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 
   /*Configure GPIO pin : ACP_RST_Pin */
   GPIO_InitStruct.Pin = ACP_RST_Pin;
