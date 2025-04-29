@@ -28,6 +28,8 @@ static int countDirection(int board[6][7], int startRow, int startCol, int chngR
     }
     return count;
 }
+
+
 // 1 IS PLAYER WIN
 // 2 IS TIE
 // 0 NO WIN OR TIE, GAME STILL GOING

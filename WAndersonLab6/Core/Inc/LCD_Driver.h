@@ -48,6 +48,9 @@
 #define BOARD_X_START 20
 #define BOARD_Y_START 60
 
+#define FLOATING_COIN_Y0   0
+#define FLOATING_COIN_H    45
+
 /* Timing configuration from datahseet
   HSYNC=10 (9+1)
   HBP=20 (29-10+1)
@@ -93,7 +96,8 @@ void LCD_DrawMenuScreen(void);
 void LCD_DrawGameBoard(int board[6][7]);
 void LCD_DrawFloatingCoin(int column, uint16_t color);
 void LCD_DrawGameOverScreen(int winner, int redWins, int yellowWins, int elapsedTime);
-////////////////
+void LCD_ClearFloatingBand(void);
+///////////////////////////////////////////////////////////
 
 // GAME IMPLIMENTATION TIME:
 void Graphics_DrawMenu(void);

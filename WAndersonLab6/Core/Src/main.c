@@ -72,6 +72,8 @@ static void MX_I2C3_Init(void);
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
 
+
+static uint32_t game_start_ms;
 int board[6][7] = {0};
 int currentPlayer = 1;
 int onePlayerMode = 0;
@@ -150,19 +152,21 @@ int main(void)
       }
   }
 
-  LCD_Clear(0, COLOR_BG);
+  LCD_DrawGameBoard(board);
+  game_start_ms = HAL_GetTick();
 
   while (!gameOver) {
-	  LCD_DrawGameBoard(board);
 	  uint16_t color;
 	  if (currentPlayer == 1) {
 		  color = COLOR_PLAYER1;
 	  } else {
 		  color = COLOR_PLAYER2;
 	  }
+	  HAL_Delay(50);
 	  LCD_DrawFloatingCoin(currentColumn, color);
 
 	  if (returnTouchStateAndLocation(&touch) == STMPE811_State_Pressed) {
+		  LCD_ClearFloatingBand();
 		  if (touch.y < 120) currentColumn = MAX(0, currentColumn - 1);
 		  else currentColumn = MIN(6, currentColumn + 1);
 		  HAL_Delay(100);
@@ -655,6 +659,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
             }
         }
     }
+    LCD_DrawGameBoard(board);
 }
 
 /* USER CODE END 4 */

@@ -375,6 +375,14 @@ void LCD_DrawGameBoard(int board[6][7]) {
     }
 }
 
+void LCD_ClearFloatingBand(void) {
+    for (uint16_t y = FLOATING_COIN_Y0; y < FLOATING_COIN_H; y++) {
+      for (uint16_t x = 0; x < LCD_PIXEL_WIDTH; x++) {
+        LCD_Draw_Pixel(x, y, COLOR_BG);
+      }
+    }
+}
+
 
 void LCD_DrawGameOverScreen(int winner, int redWins, int yellowWins, int elapsedTime) {
     LCD_Clear(0, COLOR_BG);
