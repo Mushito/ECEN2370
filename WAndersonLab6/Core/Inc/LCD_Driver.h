@@ -13,6 +13,7 @@
 #include "fonts.h"
 #include "stmpe811.h"
 #include <stdio.h>
+#include <string.h>
 
 #define COMPILE_TOUCH_FUNCTIONS COMPILE_TOUCH
 #define TOUCH_INTERRUPT_ENABLED COMPILE_TOUCH_INTERRUPT_SUPPORT
@@ -50,6 +51,7 @@
 
 #define FLOATING_COIN_Y0   0
 #define FLOATING_COIN_H    45
+
 
 /* Timing configuration from datahseet
   HSYNC=10 (9+1)
@@ -97,6 +99,7 @@ void LCD_DrawGameBoard(int board[6][7]);
 void LCD_DrawFloatingCoin(int column, uint16_t color);
 void LCD_DrawGameOverScreen(int winner, int redWins, int yellowWins, int elapsedTime);
 void LCD_ClearFloatingBand(void);
+void draw_elapsed_time(uint32_t seconds);
 ///////////////////////////////////////////////////////////
 
 // GAME IMPLIMENTATION TIME:

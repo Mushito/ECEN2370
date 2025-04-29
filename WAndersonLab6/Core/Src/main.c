@@ -84,6 +84,9 @@ int currentColumn = 3;
 int redWins = 0;
 int yellowWins = 0;
 int elapsedTime = 0;
+
+volatile uint32_t game_seconds = 0;
+volatile bool     seconds_dirty = false;
 ///////////////////END TESTING////////////////
 
 
@@ -127,11 +130,13 @@ int main(void)
   MX_GPIO_Init();
   MX_LTDC_Init();
   MX_RNG_Init();
-  MX_TIM2_Init();
   MX_SPI5_Init();
   MX_I2C3_Init();
   /* USER CODE BEGIN 2 */
   ApplicationInit(); // Initializes the LCD functionality
+
+  game_seconds  = 0;
+  seconds_dirty = true;
 
   HAL_Delay(1000);
   /* USER CODE END 2 */
@@ -151,9 +156,9 @@ int main(void)
           break;
       }
   }
-
   LCD_DrawGameBoard(board);
-  game_start_ms = HAL_GetTick();
+  MX_TIM2_Init();
+  HAL_TIM_Base_Start_IT(&htim2);
 
   while (!gameOver) {
 	  uint16_t color;
@@ -164,6 +169,11 @@ int main(void)
 	  }
 	  HAL_Delay(50);
 	  LCD_DrawFloatingCoin(currentColumn, color);
+
+	  if (seconds_dirty) {
+	    seconds_dirty = false;
+	    draw_elapsed_time(game_seconds);
+	  }
 
 	  if (returnTouchStateAndLocation(&touch) == STMPE811_State_Pressed) {
 		  LCD_ClearFloatingBand();
@@ -430,6 +440,7 @@ static void MX_TIM2_Init(void)
   /* USER CODE BEGIN TIM2_Init 0 */
 
   /* USER CODE END TIM2_Init 0 */
+  __HAL_RCC_TIM2_CLK_ENABLE();
 
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
@@ -438,9 +449,9 @@ static void MX_TIM2_Init(void)
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 0;
+  htim2.Init.Prescaler = 8399;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 4294967295;
+  htim2.Init.Period = 9999;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
@@ -459,6 +470,10 @@ static void MX_TIM2_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN TIM2_Init 2 */
+  HAL_TIM_Base_Start_IT(&htim2);
+
+  HAL_NVIC_SetPriority(TIM2_IRQn, 2, 0);
+  HAL_NVIC_EnableIRQ(TIM2_IRQn);
 
   /* USER CODE END TIM2_Init 2 */
 
@@ -662,6 +677,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
     LCD_DrawGameBoard(board);
 }
 
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+  if (htim->Instance == TIM2) {
+    game_seconds++;
+    seconds_dirty = true;
+  }
+}
 /* USER CODE END 4 */
 
 /**

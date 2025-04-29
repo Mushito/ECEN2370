@@ -7,6 +7,7 @@
 
 #include "LCD_Driver.h"
 
+
 /**
   * @brief LTDC Initialization Function
   * @param None
@@ -383,6 +384,27 @@ void LCD_ClearFloatingBand(void) {
     }
 }
 
+void draw_elapsed_time(uint32_t t) {
+    char buf[8];
+    sprintf(buf, "%lu", t);  // Convert seconds to text
+
+    uint16_t text_w = strlen(buf) * 8; // 8 pixels per character in Font12x12
+    uint16_t text_h = 12;
+    uint16_t x0 = (LCD_PIXEL_WIDTH - text_w) / 2;
+    uint16_t y0 = LCD_PIXEL_HEIGHT - text_h - 2;
+
+    // Clear previous text manually
+    for (uint16_t i = 0; i < strlen(buf); i++) {
+        LCD_Draw_Circle_Fill(x0 + i * 12, y0 + 4, 10, COLOR_BG);  // rough clearing
+    }
+
+    // Draw new text
+    LCD_SetFont(&Font12x12);
+    LCD_SetTextColor(LCD_COLOR_BLACK);
+    for (uint8_t i = 0; buf[i]; i++) {
+        LCD_DisplayChar(x0 + i * 8, y0, buf[i]);
+    }
+}
 
 void LCD_DrawGameOverScreen(int winner, int redWins, int yellowWins, int elapsedTime) {
     LCD_Clear(0, COLOR_BG);

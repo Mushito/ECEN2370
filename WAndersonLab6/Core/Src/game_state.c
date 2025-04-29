@@ -34,7 +34,7 @@ static int countDirection(int board[6][7], int startRow, int startCol, int chngR
 // 2 IS TIE
 // 0 NO WIN OR TIE, GAME STILL GOING
 int checkWinOrTie(int board[6][7], int row, int col, int player) {
-	return 0; //TESTING//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	return 0; /////////////////////////////TESTING///////////////////////////////////
 //    if (1 + countDirection(board, row, col, 0, 1, player) + countDirection(board, row, col, 0, -1, player) >= 4) return 1;
 //    if (1 + countDirection(board, row, col, 1, 0, player) + countDirection(board, row, col, -1, 0, player) >= 4) return 1;
 //    if (1 + countDirection(board, row, col, 1, 1, player) + countDirection(board, row, col, -1, -1, player) >= 4) return 1;
@@ -48,6 +48,7 @@ int checkWinOrTie(int board[6][7], int row, int col, int player) {
 //            }
 //        }
 //    }
+//    HAL_TIM_Base_Stop_IT(&htim2); //////////STOP TIMER
 //    return 2;
 }
 
