@@ -86,7 +86,7 @@ int yellowWins = 0;
 int elapsedTime = 0;
 
 volatile uint32_t game_seconds = 0;
-volatile bool     seconds_dirty = false;
+volatile bool     seconds_flag = false;
 ///////////////////END TESTING////////////////
 
 
@@ -136,7 +136,7 @@ int main(void)
   ApplicationInit(); // Initializes the LCD functionality
 
   game_seconds  = 0;
-  seconds_dirty = true;
+  seconds_flag = true;
 
   HAL_Delay(1000);
   /* USER CODE END 2 */
@@ -170,8 +170,8 @@ int main(void)
 	  HAL_Delay(50);
 	  LCD_DrawFloatingCoin(currentColumn, color);
 
-	  if (seconds_dirty) {
-	    seconds_dirty = false;
+	  if (seconds_flag) {
+	    seconds_flag = false;
 	    draw_elapsed_time(game_seconds);
 	  }
 
@@ -680,7 +680,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
   if (htim->Instance == TIM2) {
     game_seconds++;
-    seconds_dirty = true;
+    seconds_flag = true;
   }
 }
 /* USER CODE END 4 */

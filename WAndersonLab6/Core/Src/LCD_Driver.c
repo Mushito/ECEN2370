@@ -269,7 +269,6 @@ void LCD_Draw_Char(uint16_t Xpos, uint16_t Ypos, const uint16_t *c)
     {
       if((((c[index] & ((0x80 << ((LCD_Currentfonts->Width / 12 ) * 8 ) ) >> counter)) == 0x00) && (LCD_Currentfonts->Width <= 12)) || (((c[index] & (0x1 << counter)) == 0x00)&&(LCD_Currentfonts->Width > 12 )))
       {
-         //Background If want to overrite text under then add a set color here
       }
       else
       {
@@ -279,7 +278,6 @@ void LCD_Draw_Char(uint16_t Xpos, uint16_t Ypos, const uint16_t *c)
   }
 }
 
-//This was taken and adapted from stm32's mcu code
 void LCD_DisplayChar(uint16_t Xpos, uint16_t Ypos, uint8_t Ascii)
 {
   Ascii -= 32;
@@ -290,8 +288,6 @@ void visualDemo(void)
 {
 	uint16_t x;
 	uint16_t y;
-	// This for loop just illustrates how with using logic and for loops, you can create interesting things
-	// this may or not be useful ;)
 	for(y=0; y<LCD_PIXEL_HEIGHT; y++){
 		for(x=0; x < LCD_PIXEL_WIDTH; x++){
 			if (x & 32)
@@ -370,8 +366,8 @@ void LCD_DrawGameBoard(int board[6][7]) {
             if (board[row][col] == 1) color = COLOR_PLAYER1;
             else if (board[row][col] == 2) color = COLOR_PLAYER2;
 
-            LCD_Draw_Circle_Fill(x, y, CELL_RADIUS, COLOR_GRID);     // background
-            LCD_Draw_Circle_Fill(x, y, CELL_RADIUS - 3, color);       //draw coin
+            LCD_Draw_Circle_Fill(x, y, CELL_RADIUS, COLOR_GRID);
+            LCD_Draw_Circle_Fill(x, y, CELL_RADIUS - 3, color);
         }
     }
 }
@@ -386,16 +382,15 @@ void LCD_ClearFloatingBand(void) {
 
 void draw_elapsed_time(uint32_t t) {
     char buf[8];
-    sprintf(buf, "%lu", t);  // Convert seconds to text
+    sprintf(buf, "%lu", t);
 
-    uint16_t text_w = strlen(buf) * 8; // 8 pixels per character in Font12x12
+    uint16_t text_w = strlen(buf) * 8;
     uint16_t text_h = 12;
     uint16_t x0 = (LCD_PIXEL_WIDTH - text_w) / 2;
     uint16_t y0 = LCD_PIXEL_HEIGHT - text_h - 2;
 
-    // Clear previous text manually
     for (uint16_t i = 0; i < strlen(buf); i++) {
-        LCD_Draw_Circle_Fill(x0 + i * 12, y0 + 4, 10, COLOR_BG);  // rough clearing
+        LCD_Draw_Circle_Fill(x0 + i * 12, y0 + 4, 10, COLOR_BG);
     }
 
     // Draw new text
@@ -408,50 +403,52 @@ void draw_elapsed_time(uint32_t t) {
 
 void LCD_DrawGameOverScreen(int winner, int redWins, int yellowWins, int elapsedTime) {
     LCD_Clear(0, COLOR_BG);
-    LCD_SetTextColor(LCD_COLOR_BLACK);
     LCD_SetFont(&Font16x24);
 
     if (winner == 1) {
-        LCD_DisplayChar(40, 40, 'R');
-        LCD_DisplayChar(40, 60, 'E');
-        LCD_DisplayChar(40, 80, 'D');
-        LCD_DisplayChar(40, 100, ' ');
-        LCD_DisplayChar(40, 120, 'W');
-        LCD_DisplayChar(40, 140, 'I');
-        LCD_DisplayChar(40, 160, 'N');
-        LCD_DisplayChar(40, 180, 'S');
-    } else if (winner == 2) {
-        LCD_DisplayChar(40, 40, 'Y');
-        LCD_DisplayChar(40, 60, 'E');
-        LCD_DisplayChar(40, 80, 'L');
-        LCD_DisplayChar(40, 100, 'L');
-        LCD_DisplayChar(40, 120, 'O');
-        LCD_DisplayChar(40, 140, 'W');
-        LCD_DisplayChar(40, 160, ' ');
-        LCD_DisplayChar(40, 180, 'W');
-        LCD_DisplayChar(40, 200, 'I');
-        LCD_DisplayChar(40, 220, 'N');
-        LCD_DisplayChar(40, 240, 'S');
-    } else {
-        LCD_DisplayChar(40, 40, 'T');
-        LCD_DisplayChar(40, 60, 'I');
-        LCD_DisplayChar(40, 80, 'E');
+        LCD_SetTextColor(LCD_COLOR_RED);
+        LCD_DisplayChar(40, 100, 'R');
+        LCD_DisplayChar(60, 100, 'E');
+        LCD_DisplayChar(80, 100, 'D');
+        LCD_DisplayChar(100, 100, ' ');
+        LCD_DisplayChar(120, 100, 'W');
+        LCD_DisplayChar(140, 100, 'I');
+        LCD_DisplayChar(160, 100, 'N');
+        LCD_DisplayChar(180, 100, 'S');
+    }
+    else if (winner == 2) {
+        LCD_SetTextColor(LCD_COLOR_YELLOW);
+        LCD_DisplayChar(20, 100, 'Y');
+        LCD_DisplayChar(40, 100, 'E');
+        LCD_DisplayChar(60, 100, 'L');
+        LCD_DisplayChar(80, 100, 'L');
+        LCD_DisplayChar(100, 100, 'O');
+        LCD_DisplayChar(120, 100, 'W');
+        LCD_DisplayChar(140, 100, ' ');
+        LCD_DisplayChar(160, 100, 'W');
+        LCD_DisplayChar(180, 100, 'I');
+        LCD_DisplayChar(200, 100, 'N');
+        LCD_DisplayChar(220, 100, 'S');
+    }
+    else { // tie
+        LCD_SetTextColor(LCD_COLOR_BLACK);
+        LCD_DisplayChar(100, 100, 'T');
+        LCD_DisplayChar(120, 100, 'I');
+        LCD_DisplayChar(140, 100, 'E');
     }
 
-    char buffer[32];
-    sprintf(buffer, "Red: %d  Yellow: %d", redWins, yellowWins);
-    for (int i = 0; buffer[i]; i++) {
-        LCD_DisplayChar(200, 40 + i * 16, buffer[i]);
-    }
-
-	LCD_DisplayChar(200, 200, 'R');
-	LCD_DisplayChar(200, 220, 'E');
-	LCD_DisplayChar(200, 240, 'S');
-	LCD_DisplayChar(200, 260, 'T');
-	LCD_DisplayChar(200, 280, 'A');
-	LCD_DisplayChar(200, 300, 'R');
-	LCD_DisplayChar(200, 320, 'T');
+    // Draw "Restart" below the winner line
+    LCD_SetTextColor(LCD_COLOR_BLACK);
+    LCD_DisplayChar(60, 180, 'R');
+    LCD_DisplayChar(80, 180, 'E');
+    LCD_DisplayChar(100, 180, 'S');
+    LCD_DisplayChar(120, 180, 'T');
+    LCD_DisplayChar(140, 180, 'A');
+    LCD_DisplayChar(160, 180, 'R');
+    LCD_DisplayChar(180, 180, 'T');
 }
+
+
 
 void LCD_DrawFloatingCoin(int column, uint16_t color) {
     int x = BOARD_X_START + column * (2 * CELL_RADIUS + CELL_SPACING);
