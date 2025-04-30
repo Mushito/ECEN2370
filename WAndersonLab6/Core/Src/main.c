@@ -142,8 +142,8 @@ int main(void)
   /////////////////////////// TEST DRAW FUNCTIONS////////////////////////////////
   STMPE811_TouchData touch;
   while (1){
-	  LCD_DrawMenuScreen();
-	  //gameConfig();
+	  //LCD_DrawMenuScreen();
+	  gameConfig();
   while (1){
       if (returnTouchStateAndLocation(&touch) == STMPE811_State_Pressed) {
           if (touch.y < 120) {
@@ -653,9 +653,8 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void gameConfig(void){
 	  LCD_DrawMenuScreen();
-	  for (int i = 0; i < 6; i++)
-	      for (int j = 0; j < 7; j++)
-	          board[i][j] = 0;
+	  memset(board, 0, sizeof(board[0][0]) * 6 * 7);
+//	  memset(board, 0, sizeof(board));
 	  currentPlayer = 1;
 	  currentColumn = 3;
 	  gameOver = 0;
@@ -670,9 +669,9 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 	lastPressTime = HAL_GetTick();
 
     if (GPIO_Pin == GPIO_PIN_0) {
-        int placedRow = placeCoin(board, currentColumn, currentPlayer);
+        uint8_t placedRow = placeCoin(board, currentColumn, currentPlayer);
         if (placedRow != -1) { // THIS CHECKS IF ROW IS FULL, IT WON'T PLACE THE COIN IF THE ROW IS FULL
-            int result = checkWinOrTie(board, placedRow, currentColumn, currentPlayer);
+            uint8_t result = checkWinOrTie(board, placedRow, currentColumn, currentPlayer);
             if (result == 1) {
                 winner = currentPlayer;
                 gameOver = 1;

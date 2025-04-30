@@ -6,7 +6,7 @@
 ../Core/Src/main.c:396:13:MX_SPI5_Init	2
 ../Core/Src/main.c:434:13:MX_TIM2_Init	4
 ../Core/Src/main.c:484:13:MX_GPIO_Init	1
-../Core/Src/main.c:654:6:gameConfig	3
-../Core/Src/main.c:667:6:HAL_GPIO_EXTI_Callback	7
-../Core/Src/main.c:690:6:HAL_TIM_PeriodElapsedCallback	2
-../Core/Src/main.c:702:6:Error_Handler	1
+../Core/Src/main.c:654:6:gameConfig	1
+../Core/Src/main.c:666:6:HAL_GPIO_EXTI_Callback	6
+../Core/Src/main.c:689:6:HAL_TIM_PeriodElapsedCallback	2
+../Core/Src/main.c:701:6:Error_Handler	1
