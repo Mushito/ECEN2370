@@ -71,21 +71,18 @@ static void MX_I2C3_Init(void);
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
+uint8_t board[6][7] = {0};
+uint8_t currentPlayer = 1;
+uint8_t onePlayerMode = 0;
+uint8_t gameOver = 0;
+uint8_t winner = 0;
+uint8_t currentColumn = 3;
 
+uint8_t redWins = 0;
+uint8_t yellowWins = 0;
+uint16_t elapsedTime = 0;
 
-static uint32_t game_start_ms;
-int board[6][7] = {0};
-int currentPlayer = 1;
-int onePlayerMode = 0;
-int gameOver = 0;
-int winner = 0;
-int currentColumn = 3;
-
-int redWins = 0;
-int yellowWins = 0;
-int elapsedTime = 0;
-
-volatile uint32_t game_seconds = 0;
+volatile uint8_t game_seconds = 0;
 volatile bool     seconds_flag = false;
 ///////////////////END TESTING////////////////
 
@@ -107,7 +104,6 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -133,20 +129,22 @@ int main(void)
   MX_SPI5_Init();
   MX_I2C3_Init();
   /* USER CODE BEGIN 2 */
-  ApplicationInit(); // Initializes the LCD functionality
+  ApplicationInit();
 
   game_seconds  = 0;
   seconds_flag = true;
 
-  HAL_Delay(1000);
+  HAL_Delay(500);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   /////////////////////////// TEST DRAW FUNCTIONS////////////////////////////////
-  LCD_DrawMenuScreen();
   STMPE811_TouchData touch;
-  while (1) {
+  while (1){
+	  LCD_DrawMenuScreen();
+	  //gameConfig();
+  while (1){
       if (returnTouchStateAndLocation(&touch) == STMPE811_State_Pressed) {
           if (touch.y < 120) {
               onePlayerMode = 1;
@@ -184,12 +182,11 @@ int main(void)
   }
 
   LCD_DrawGameOverScreen(winner, redWins, yellowWins, elapsedTime);
-
-  while (1);
-////////////////END TEST///////////////////////////////
-  /* USER CODE END 3 */
+  while (returnTouchStateAndLocation(&touch) != STMPE811_State_Pressed){
+  }
+  }
 }
-
+  /* USER CODE END 3 */
 /**
   * @brief System Clock Configuration
   * @retval None
@@ -654,6 +651,19 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void gameConfig(void){
+	  LCD_DrawMenuScreen();
+	  for (int i = 0; i < 6; i++)
+	      for (int j = 0; j < 7; j++)
+	          board[i][j] = 0;
+	  currentPlayer = 1;
+	  currentColumn = 3;
+	  gameOver = 0;
+	  winner = 0;
+	  game_seconds = 0;
+	  seconds_flag = true;
+}
+
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 	static uint32_t lastPressTime = 0;
 	if (HAL_GetTick() - lastPressTime < 200) return;

@@ -91,23 +91,14 @@ void LCD_Clear(uint8_t LayerIndex, uint16_t Color);
 
 void LCD_Error_Handler(void);
 
-// Demo using provided functions
-void visualDemo(void);
 //////////////////////////////// USER DECLARED FUNCTIONS////////////////////////
 void LCD_DrawMenuScreen(void);
-void LCD_DrawGameBoard(int board[6][7]);
-void LCD_DrawFloatingCoin(int column, uint16_t color);
-void LCD_DrawGameOverScreen(int winner, int redWins, int yellowWins, int elapsedTime);
+void LCD_DrawGameBoard(uint8_t board[6][7]);
+void LCD_DrawFloatingCoin(uint8_t column, uint16_t color);
+void LCD_DrawGameOverScreen(uint8_t winner, uint8_t redWins, uint8_t yellowWins, uint8_t elapsedTime);
 void LCD_ClearFloatingBand(void);
-void draw_elapsed_time(uint32_t seconds);
+void draw_elapsed_time(uint8_t seconds);
 ///////////////////////////////////////////////////////////
-
-// GAME IMPLIMENTATION TIME:
-void Graphics_DrawMenu(void);
-void Graphics_DrawBoard(int board[6][7]);
-void Graphics_DrawCoinPreview(int col, uint16_t color);
-void Graphics_DrawGameOverScreen(int winner, int redScore, int yellowScore, int seconds);
-void Graphics_ClearScreen(void);                      // Clear to white or other background
 
 
 void LCD_Error_Handler(void);

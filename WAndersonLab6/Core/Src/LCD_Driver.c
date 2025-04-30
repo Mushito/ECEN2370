@@ -284,50 +284,6 @@ void LCD_DisplayChar(uint16_t Xpos, uint16_t Ypos, uint8_t Ascii)
   LCD_Draw_Char(Xpos, Ypos, &LCD_Currentfonts->table[Ascii * LCD_Currentfonts->Height]);
 }
 
-void visualDemo(void)
-{
-	uint16_t x;
-	uint16_t y;
-	for(y=0; y<LCD_PIXEL_HEIGHT; y++){
-		for(x=0; x < LCD_PIXEL_WIDTH; x++){
-			if (x & 32)
-				frameBuffer[x*y] = LCD_COLOR_WHITE;
-			else
-				frameBuffer[x*y] = LCD_COLOR_BLACK;
-		}
-	}
-
-	HAL_Delay(1500);
-	LCD_Clear(0, LCD_COLOR_GREEN);
-	HAL_Delay(1500);
-	LCD_Clear(0, LCD_COLOR_RED);
-	HAL_Delay(1500);
-	LCD_Clear(0, LCD_COLOR_WHITE);
-	LCD_Draw_Vertical_Line(10,10,250,LCD_COLOR_MAGENTA);
-	HAL_Delay(1500);
-	LCD_Draw_Vertical_Line(230,10,250,LCD_COLOR_MAGENTA);
-	HAL_Delay(1500);
-
-	LCD_Draw_Circle_Fill(125,150,20,LCD_COLOR_BLACK);
-	HAL_Delay(2000);
-
-	LCD_Clear(0,LCD_COLOR_BLUE);
-	LCD_SetTextColor(LCD_COLOR_BLACK);
-	LCD_SetFont(&Font16x24);
-
-	LCD_DisplayChar(100,140,'H');
-	LCD_DisplayChar(115,140,'e');
-	LCD_DisplayChar(125,140,'l');
-	LCD_DisplayChar(130,140,'l');
-	LCD_DisplayChar(140,140,'o');
-
-	LCD_DisplayChar(100,160,'W');
-	LCD_DisplayChar(115,160,'o');
-	LCD_DisplayChar(125,160,'r');
-	LCD_DisplayChar(130,160,'l');
-	LCD_DisplayChar(140,160,'d');
-}
-
 void LCD_DrawMenuScreen(void) {
     LCD_Clear(0, COLOR_BG);
 
@@ -354,13 +310,13 @@ void LCD_DrawMenuScreen(void) {
     LCD_Draw_Vertical_Line(120, 40, 240, LCD_COLOR_BLACK);
 }
 
-void LCD_DrawGameBoard(int board[6][7]) {
+void LCD_DrawGameBoard(uint8_t board[6][7]) {
     LCD_Clear(0, COLOR_BG);
 
-    for (int row = 0; row < BOARD_ROWS; row++) {
-        for (int col = 0; col < BOARD_COLS; col++) {
-            int x = BOARD_X_START + col * (2 * CELL_RADIUS + CELL_SPACING);
-            int y = BOARD_Y_START + row * (2 * CELL_RADIUS + CELL_SPACING);
+    for (uint8_t row = 0; row < BOARD_ROWS; row++) {
+        for (uint8_t col = 0; col < BOARD_COLS; col++) {
+            uint16_t x = BOARD_X_START + col * (2 * CELL_RADIUS + CELL_SPACING);
+            uint16_t y = BOARD_Y_START + row * (2 * CELL_RADIUS + CELL_SPACING);
             uint16_t color = COLOR_BG;
 
             if (board[row][col] == 1) color = COLOR_PLAYER1;
@@ -380,7 +336,7 @@ void LCD_ClearFloatingBand(void) {
     }
 }
 
-void draw_elapsed_time(uint32_t t) {
+void draw_elapsed_time(uint8_t t) {
     char buf[8];
     sprintf(buf, "%lu", t);
 
@@ -396,12 +352,12 @@ void draw_elapsed_time(uint32_t t) {
     // Draw new text
     LCD_SetFont(&Font12x12);
     LCD_SetTextColor(LCD_COLOR_BLACK);
-    for (uint8_t i = 0; buf[i]; i++) {
+    for (uint16_t i = 0; buf[i]; i++) {
         LCD_DisplayChar(x0 + i * 8, y0, buf[i]);
     }
 }
 
-void LCD_DrawGameOverScreen(int winner, int redWins, int yellowWins, int elapsedTime) {
+void LCD_DrawGameOverScreen(uint8_t winner, uint8_t redWins, uint8_t yellowWins, uint8_t elapsedTime) {
     LCD_Clear(0, COLOR_BG);
     LCD_SetFont(&Font16x24);
 
@@ -450,9 +406,9 @@ void LCD_DrawGameOverScreen(int winner, int redWins, int yellowWins, int elapsed
 
 
 
-void LCD_DrawFloatingCoin(int column, uint16_t color) {
-    int x = BOARD_X_START + column * (2 * CELL_RADIUS + CELL_SPACING);
-    int y = BOARD_Y_START - 30;
+void LCD_DrawFloatingCoin(uint8_t column, uint16_t color) {
+	uint16_t x = BOARD_X_START + column * (2 * CELL_RADIUS + CELL_SPACING);
+	uint16_t y = BOARD_Y_START - 30;
 
     LCD_Draw_Circle_Fill(x, y, CELL_RADIUS, color);
 }
