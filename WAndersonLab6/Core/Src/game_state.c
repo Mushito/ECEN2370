@@ -7,17 +7,17 @@
 
 #include "game_state.h"
 
-int placeCoin(uint8_t board[6][7], uint8_t col, uint8_t player) {
+uint8_t placeCoin(uint8_t board[6][7], uint8_t col, uint8_t player) {
     for (uint8_t row = 5; row >= 0; row--) {
         if (board[row][col] == 0) {
             board[row][col] = player;
             return row;
         }
     }
-    return -1; // COL FULL, IMPLIMENT THIS LATER AND DON'T FORGET
+    return -1;
 }
 
-static int countDirection(uint8_t board[6][7], uint8_t startRow, uint8_t startCol, uint8_t chngRow, uint8_t chngCol, uint8_t player) {
+static uint8_t countDirection(uint8_t board[6][7], uint8_t startRow, uint8_t startCol, uint8_t chngRow, uint8_t chngCol, uint8_t player) {
 	uint8_t count = 0;
 	uint8_t r = startRow + chngRow;
 	uint8_t c = startCol + chngCol;
@@ -33,7 +33,7 @@ static int countDirection(uint8_t board[6][7], uint8_t startRow, uint8_t startCo
 // 1 IS PLAYER WIN
 // 2 IS TIE
 // 0 NO WIN OR TIE, GAME STILL GOING
-int checkWinOrTie(uint8_t board[6][7], uint8_t row, uint8_t col, uint8_t player) {
+uint8_t checkWinOrTie(uint8_t board[6][7], uint8_t row, uint8_t col, uint8_t player) {
     if (1 + countDirection(board, row, col, 0, 1, player) +
             countDirection(board, row, col, 0, -1, player) >= 4)
         return 1;
@@ -60,5 +60,6 @@ int checkWinOrTie(uint8_t board[6][7], uint8_t row, uint8_t col, uint8_t player)
 
     return 2;
 }
+
 
 

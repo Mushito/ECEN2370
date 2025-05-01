@@ -244,7 +244,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
 #define NBL1_GPIO_Port GPIOE
 
 /* USER CODE BEGIN Private defines */
-
+#define PLAYER_1 0
+#define PLAYER_2 1
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

@@ -25,6 +25,7 @@
 #include "LCD_Driver.h"
 #include "stmpe811.h"
 #include "game_state.h"
+#include "AI.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -81,6 +82,7 @@ uint8_t currentColumn = 3;
 uint8_t redWins = 0;
 uint8_t yellowWins = 0;
 uint16_t elapsedTime = 0;
+uint16_t color;
 
 volatile uint8_t game_seconds = 0;
 volatile bool     seconds_flag = false;
@@ -102,47 +104,24 @@ volatile bool     seconds_flag = false;
   */
 int main(void)
 {
-
-  /* USER CODE BEGIN 1 */
-  /* USER CODE END 1 */
-
-  /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
   SystemClock_Config();
 
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
-  /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_LTDC_Init();
   MX_RNG_Init();
   MX_SPI5_Init();
   MX_I2C3_Init();
-  /* USER CODE BEGIN 2 */
   ApplicationInit();
 
   game_seconds  = 0;
   seconds_flag = true;
 
   HAL_Delay(500);
-  /* USER CODE END 2 */
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  /////////////////////////// TEST DRAW FUNCTIONS////////////////////////////////
   STMPE811_TouchData touch;
   while (1){
-	  //LCD_DrawMenuScreen();
 	  gameConfig();
   while (1){
       if (returnTouchStateAndLocation(&touch) == STMPE811_State_Pressed) {
@@ -158,39 +137,82 @@ int main(void)
   MX_TIM2_Init();
   HAL_TIM_Base_Start_IT(&htim2);
 
-  while (!gameOver) {
-	  uint16_t color;
-	  if (currentPlayer == 1) {
-		  color = COLOR_PLAYER1;
-	  } else {
-		  color = COLOR_PLAYER2;
-	  }
-	  HAL_Delay(50);
-	  LCD_DrawFloatingCoin(currentColumn, color);
+  switch (onePlayerMode) {
+      case 0: // 2 PLAYER
+    	  while (!gameOver) {
+    		  if (currentPlayer == 1) {
+    			  color = COLOR_PLAYER1;
+    		  } else {
+    			  color = COLOR_PLAYER2;
+    		  }
+    		  HAL_Delay(50);
+    		  LCD_DrawFloatingCoin(currentColumn, color);
 
-	  if (seconds_flag) {
-	    seconds_flag = false;
-	    draw_elapsed_time(game_seconds);
-	  }
+    		  if (seconds_flag) {
+    		    seconds_flag = false;
+    		    draw_elapsed_time(game_seconds);
+    		  }
 
-	  if (returnTouchStateAndLocation(&touch) == STMPE811_State_Pressed) {
-		  LCD_ClearFloatingBand();
-		  if (touch.y < 120) currentColumn = MAX(0, currentColumn - 1);
-		  else currentColumn = MIN(6, currentColumn + 1);
-		  HAL_Delay(100);
-	  }
+    		  if (returnTouchStateAndLocation(&touch) == STMPE811_State_Pressed) {
+    			  LCD_ClearFloatingBand();
+    			  if (touch.y < 120) currentColumn = MAX(0, currentColumn - 1);
+    			  else currentColumn = MIN(6, currentColumn + 1);
+    			  HAL_Delay(100);
+    		  }
+    	  }
+          break;
+
+      case 1: // 1 PLAYER
+          while (!gameOver) {
+              if (currentPlayer == HUMAN_PLAYER) {
+            	  color = COLOR_PLAYER1;
+        		  HAL_Delay(50);
+        		  LCD_DrawFloatingCoin(currentColumn, color);
+
+        		  if (seconds_flag) {
+        		    seconds_flag = false;
+        		    draw_elapsed_time(game_seconds);
+        		  }
+
+        		  if (returnTouchStateAndLocation(&touch) == STMPE811_State_Pressed) {
+        			  LCD_ClearFloatingBand();
+        			  if (touch.y < 120) currentColumn = MAX(0, currentColumn - 1);
+        			  else currentColumn = MIN(6, currentColumn + 1);
+        			  HAL_Delay(100);
+        		  }
+              } else {
+                  // AI TURN
+                  HAL_Delay(200);
+                  color = COLOR_PLAYER2;
+                  uint8_t aiCol = getBestMove(board);
+                  int8_t  row   = placeCoin(board, aiCol, AI_PLAYER);
+                  LCD_DrawGameBoard(board);
+                  if (row >= 0) {
+                      uint8_t outcome = checkWinOrTie(board, row, aiCol, AI_PLAYER);
+                      if (outcome == 1) {
+                          winner   = AI_PLAYER;
+                          gameOver = 1;
+                      } else if (outcome == 2) {
+                          winner   = 0;
+                          gameOver = 1;
+                      } else {
+                          currentPlayer = HUMAN_PLAYER;
+                      }
+                  }
+                  if (seconds_flag) {
+                      seconds_flag = false;
+                      draw_elapsed_time(game_seconds);
+                  }
+                  LCD_DrawGameBoard(board);
+              }
+          }
+          break;
   }
-
   LCD_DrawGameOverScreen(winner, redWins, yellowWins, elapsedTime);
   while (returnTouchStateAndLocation(&touch) != STMPE811_State_Pressed){
   }
   }
 }
-  /* USER CODE END 3 */
-/**
-  * @brief System Clock Configuration
-  * @retval None
-  */
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
@@ -652,15 +674,15 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 void gameConfig(void){
-	  LCD_DrawMenuScreen();
 	  memset(board, 0, sizeof(board[0][0]) * 6 * 7);
-//	  memset(board, 0, sizeof(board));
 	  currentPlayer = 1;
 	  currentColumn = 3;
 	  gameOver = 0;
 	  winner = 0;
 	  game_seconds = 0;
 	  seconds_flag = true;
+	  LCD_DrawMenuScreen();
+	  HAL_Delay(200);
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
