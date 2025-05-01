@@ -29,25 +29,25 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  12 .ARM.attributes 00000030  00000000  00000000  0000b078  2**0
                   CONTENTS, READONLY
- 13 .debug_info   000144b4  00000000  00000000  0000b0a8  2**0
+ 13 .debug_info   00014478  00000000  00000000  0000b0a8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_abbrev 00003276  00000000  00000000  0001f55c  2**0
+ 14 .debug_abbrev 00003247  00000000  00000000  0001f520  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_aranges 00001448  00000000  00000000  000227d8  2**3
+ 15 .debug_aranges 00001440  00000000  00000000  00022768  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_rnglists 00000fce  00000000  00000000  00023c20  2**0
+ 16 .debug_rnglists 00000fc8  00000000  00000000  00023ba8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_macro  000277da  00000000  00000000  00024bee  2**0
+ 17 .debug_macro  00027b1d  00000000  00000000  00024b70  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_line   00019fd1  00000000  00000000  0004c3c8  2**0
+ 18 .debug_line   0001a57f  00000000  00000000  0004c68d  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_str    000e3234  00000000  00000000  00066399  2**0
+ 19 .debug_str    000e321d  00000000  00000000  00066c0c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .comment      00000043  00000000  00000000  001495cd  2**0
+ 20 .comment      00000043  00000000  00000000  00149e29  2**0
                   CONTENTS, READONLY
- 21 .debug_frame  000059ac  00000000  00000000  00149610  2**2
+ 21 .debug_frame  00005990  00000000  00000000  00149e6c  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 22 .debug_line_str 00000058  00000000  00000000  0014efbc  2**0
+ 22 .debug_line_str 00000058  00000000  00000000  0014f7fc  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -1344,10 +1344,13 @@ int16_t minimax(uint8_t board[6][7], uint8_t depth, int16_t alpha, int16_t beta,
  8000bae:	f7ff fe13 	bl	80007d8 <getNextOpenRow>
  8000bb2:	4603      	mov	r3, r0
  8000bb4:	75bb      	strb	r3, [r7, #22]
-            if (r < 0) continue;
+
+            if (r < 0)
  8000bb6:	f997 3016 	ldrsb.w	r3, [r7, #22]
  8000bba:	2b00      	cmp	r3, #0
  8000bbc:	db45      	blt.n	8000c4a <minimax+0x132>
+            	continue;
+
             board[r][c] = AI_PLAYER;
  8000bbe:	f997 2016 	ldrsb.w	r2, [r7, #22]
  8000bc2:	4613      	mov	r3, r2
@@ -1358,7 +1361,7 @@ int16_t minimax(uint8_t board[6][7], uint8_t depth, int16_t alpha, int16_t beta,
  8000bcc:	7f7b      	ldrb	r3, [r7, #29]
  8000bce:	2102      	movs	r1, #2
  8000bd0:	54d1      	strb	r1, [r2, r3]
-            val = MAX(val, minimax(board, depth - 1, alpha, beta, false));
+            val = MAX(val, minimax(board, depth - 1, alpha, beta, false)); //////////////TO CHANGE DIFFICULTY, INCREASE DEPTH IN AI.h.
  8000bd2:	7afb      	ldrb	r3, [r7, #11]
  8000bd4:	3b01      	subs	r3, #1
  8000bd6:	b2d9      	uxtb	r1, r3
@@ -1403,13 +1406,14 @@ int16_t minimax(uint8_t board[6][7], uint8_t depth, int16_t alpha, int16_t beta,
  8000c36:	bfb8      	it	lt
  8000c38:	4613      	movlt	r3, r2
  8000c3a:	813b      	strh	r3, [r7, #8]
-            if (alpha >= beta) break;
+
+            if (alpha >= beta)
  8000c3c:	f9b7 2008 	ldrsh.w	r2, [r7, #8]
  8000c40:	f9b7 3006 	ldrsh.w	r3, [r7, #6]
  8000c44:	429a      	cmp	r2, r3
  8000c46:	da08      	bge.n	8000c5a <minimax+0x142>
  8000c48:	e000      	b.n	8000c4c <minimax+0x134>
-            if (r < 0) continue;
+            	continue;
  8000c4a:	bf00      	nop
         for (uint8_t c = 0; c < 7; c++) {
  8000c4c:	7f7b      	ldrb	r3, [r7, #29]
@@ -1419,7 +1423,7 @@ int16_t minimax(uint8_t board[6][7], uint8_t depth, int16_t alpha, int16_t beta,
  8000c54:	2b06      	cmp	r3, #6
  8000c56:	d9a7      	bls.n	8000ba8 <minimax+0x90>
  8000c58:	e000      	b.n	8000c5c <minimax+0x144>
-            if (alpha >= beta) break;
+            	break;
  8000c5a:	bf00      	nop
         }
         return val;
@@ -1440,10 +1444,12 @@ int16_t minimax(uint8_t board[6][7], uint8_t depth, int16_t alpha, int16_t beta,
  8000c74:	f7ff fdb0 	bl	80007d8 <getNextOpenRow>
  8000c78:	4603      	mov	r3, r0
  8000c7a:	75fb      	strb	r3, [r7, #23]
-            if (r < 0) continue;
+
+            if (r < 0)
  8000c7c:	f997 3017 	ldrsb.w	r3, [r7, #23]
  8000c80:	2b00      	cmp	r3, #0
  8000c82:	db45      	blt.n	8000d10 <minimax+0x1f8>
+            	continue;
             board[r][c] = HUMAN_PLAYER;
  8000c84:	f997 2017 	ldrsb.w	r2, [r7, #23]
  8000c88:	4613      	mov	r3, r2
@@ -1499,13 +1505,14 @@ int16_t minimax(uint8_t board[6][7], uint8_t depth, int16_t alpha, int16_t beta,
  8000cfc:	bfa8      	it	ge
  8000cfe:	4613      	movge	r3, r2
  8000d00:	80fb      	strh	r3, [r7, #6]
-            if (alpha >= beta) break;
+
+            if (alpha >= beta)
  8000d02:	f9b7 2008 	ldrsh.w	r2, [r7, #8]
  8000d06:	f9b7 3006 	ldrsh.w	r3, [r7, #6]
  8000d0a:	429a      	cmp	r2, r3
  8000d0c:	da08      	bge.n	8000d20 <minimax+0x208>
  8000d0e:	e000      	b.n	8000d12 <minimax+0x1fa>
-            if (r < 0) continue;
+            	continue;
  8000d10:	bf00      	nop
         for (uint8_t c = 0; c < 7; c++) {
  8000d12:	7e7b      	ldrb	r3, [r7, #25]
@@ -1515,7 +1522,7 @@ int16_t minimax(uint8_t board[6][7], uint8_t depth, int16_t alpha, int16_t beta,
  8000d1a:	2b06      	cmp	r3, #6
  8000d1c:	d9a7      	bls.n	8000c6e <minimax+0x156>
  8000d1e:	e000      	b.n	8000d22 <minimax+0x20a>
-            if (alpha >= beta) break;
+            	break;
  8000d20:	bf00      	nop
         }
         return val;
@@ -1576,7 +1583,7 @@ uint8_t getBestMove(uint8_t board[6][7]) {
  8000d78:	9300      	str	r3, [sp, #0]
  8000d7a:	f647 73ff 	movw	r3, #32767	@ 0x7fff
  8000d7e:	4a14      	ldr	r2, [pc, #80]	@ (8000dd0 <getBestMove+0x9c>)
- 8000d80:	2100      	movs	r1, #0
+ 8000d80:	2101      	movs	r1, #1
  8000d82:	6878      	ldr	r0, [r7, #4]
  8000d84:	f7ff fec8 	bl	8000b18 <minimax>
  8000d88:	4603      	mov	r3, r0
@@ -2675,7 +2682,7 @@ void LCD_DrawGameBoard(uint8_t board[6][7]) {
  80014aa:	f64f 73ff 	movw	r3, #65535	@ 0xffff
  80014ae:	81bb      	strh	r3, [r7, #12]
 
-            if (board[row][col] == 1) color = COLOR_PLAYER1;
+            if (board[row][col] == 1)
  80014b0:	7bfa      	ldrb	r2, [r7, #15]
  80014b2:	4613      	mov	r3, r2
  80014b4:	00db      	lsls	r3, r3, #3
@@ -2686,10 +2693,11 @@ void LCD_DrawGameBoard(uint8_t board[6][7]) {
  80014be:	5cd3      	ldrb	r3, [r2, r3]
  80014c0:	2b01      	cmp	r3, #1
  80014c2:	d103      	bne.n	80014cc <LCD_DrawGameBoard+0x58>
+            	color = COLOR_PLAYER1;
  80014c4:	f44f 4378 	mov.w	r3, #63488	@ 0xf800
  80014c8:	81bb      	strh	r3, [r7, #12]
  80014ca:	e00c      	b.n	80014e6 <LCD_DrawGameBoard+0x72>
-            else if (board[row][col] == 2) color = COLOR_PLAYER2;
+            else if (board[row][col] == 2)
  80014cc:	7bfa      	ldrb	r2, [r7, #15]
  80014ce:	4613      	mov	r3, r2
  80014d0:	00db      	lsls	r3, r3, #3
@@ -2700,6 +2708,7 @@ void LCD_DrawGameBoard(uint8_t board[6][7]) {
  80014da:	5cd3      	ldrb	r3, [r2, r3]
  80014dc:	2b02      	cmp	r3, #2
  80014de:	d102      	bne.n	80014e6 <LCD_DrawGameBoard+0x72>
+            	color = COLOR_PLAYER2;
  80014e0:	f64f 73e0 	movw	r3, #65504	@ 0xffe0
  80014e4:	81bb      	strh	r3, [r7, #12]
 
@@ -3444,6 +3453,7 @@ static uint8_t countDirection(uint8_t board[6][7], uint8_t startRow, uint8_t sta
  80019d4:	7e3b      	ldrb	r3, [r7, #24]
  80019d6:	4413      	add	r3, r2
  80019d8:	737b      	strb	r3, [r7, #13]
+
     while ((r >= 0) && (r < 6) && (c >= 0) && (c < 7) && (board[r][c] == player)) {
  80019da:	e00a      	b.n	80019f2 <countDirection+0x46>
         count++;
@@ -3479,6 +3489,7 @@ static uint8_t countDirection(uint8_t board[6][7], uint8_t startRow, uint8_t sta
  8001a10:	429a      	cmp	r2, r3
  8001a12:	d0e3      	beq.n	80019dc <countDirection+0x30>
     }
+
     return count;
  8001a14:	7bfb      	ldrb	r3, [r7, #15]
 }
@@ -3508,7 +3519,7 @@ uint8_t checkWinOrTie(uint8_t board[6][7], uint8_t row, uint8_t col, uint8_t pla
  8001a36:	70bb      	strb	r3, [r7, #2]
  8001a38:	4613      	mov	r3, r2
  8001a3a:	707b      	strb	r3, [r7, #1]
-    if (1 + countDirection(board, row, col, 0, 1, player) +
+    if (1 + countDirection(board, row, col, 0, 1, player) + countDirection(board, row, col, 0, -1, player) >= 4)
  8001a3c:	78ba      	ldrb	r2, [r7, #2]
  8001a3e:	78f9      	ldrb	r1, [r7, #3]
  8001a40:	787b      	ldrb	r3, [r7, #1]
@@ -3520,7 +3531,6 @@ uint8_t checkWinOrTie(uint8_t board[6][7], uint8_t row, uint8_t col, uint8_t pla
  8001a4c:	f7ff ffae 	bl	80019ac <countDirection>
  8001a50:	4603      	mov	r3, r0
  8001a52:	1c5c      	adds	r4, r3, #1
-            countDirection(board, row, col, 0, -1, player) >= 4)
  8001a54:	78ba      	ldrb	r2, [r7, #2]
  8001a56:	78f9      	ldrb	r1, [r7, #3]
  8001a58:	787b      	ldrb	r3, [r7, #1]
@@ -3531,7 +3541,6 @@ uint8_t checkWinOrTie(uint8_t board[6][7], uint8_t row, uint8_t col, uint8_t pla
  8001a62:	6878      	ldr	r0, [r7, #4]
  8001a64:	f7ff ffa2 	bl	80019ac <countDirection>
  8001a68:	4603      	mov	r3, r0
-    if (1 + countDirection(board, row, col, 0, 1, player) +
  8001a6a:	4423      	add	r3, r4
  8001a6c:	2b03      	cmp	r3, #3
  8001a6e:	dd01      	ble.n	8001a74 <checkWinOrTie+0x52>
@@ -3539,7 +3548,7 @@ uint8_t checkWinOrTie(uint8_t board[6][7], uint8_t row, uint8_t col, uint8_t pla
  8001a70:	2301      	movs	r3, #1
  8001a72:	e072      	b.n	8001b5a <checkWinOrTie+0x138>
 
-    if (1 + countDirection(board, row, col, 1, 0, player) +
+    if (1 + countDirection(board, row, col, 1, 0, player) + countDirection(board, row, col, -1, 0, player) >= 4)
  8001a74:	78ba      	ldrb	r2, [r7, #2]
  8001a76:	78f9      	ldrb	r1, [r7, #3]
  8001a78:	787b      	ldrb	r3, [r7, #1]
@@ -3551,7 +3560,6 @@ uint8_t checkWinOrTie(uint8_t board[6][7], uint8_t row, uint8_t col, uint8_t pla
  8001a84:	f7ff ff92 	bl	80019ac <countDirection>
  8001a88:	4603      	mov	r3, r0
  8001a8a:	1c5c      	adds	r4, r3, #1
-            countDirection(board, row, col, -1, 0, player) >= 4)
  8001a8c:	78ba      	ldrb	r2, [r7, #2]
  8001a8e:	78f9      	ldrb	r1, [r7, #3]
  8001a90:	787b      	ldrb	r3, [r7, #1]
@@ -3562,7 +3570,6 @@ uint8_t checkWinOrTie(uint8_t board[6][7], uint8_t row, uint8_t col, uint8_t pla
  8001a9a:	6878      	ldr	r0, [r7, #4]
  8001a9c:	f7ff ff86 	bl	80019ac <countDirection>
  8001aa0:	4603      	mov	r3, r0
-    if (1 + countDirection(board, row, col, 1, 0, player) +
  8001aa2:	4423      	add	r3, r4
  8001aa4:	2b03      	cmp	r3, #3
  8001aa6:	dd01      	ble.n	8001aac <checkWinOrTie+0x8a>
@@ -3570,7 +3577,7 @@ uint8_t checkWinOrTie(uint8_t board[6][7], uint8_t row, uint8_t col, uint8_t pla
  8001aa8:	2301      	movs	r3, #1
  8001aaa:	e056      	b.n	8001b5a <checkWinOrTie+0x138>
 
-    if (1 + countDirection(board, row, col, 1, 1, player) +
+    if (1 + countDirection(board, row, col, 1, 1, player) + countDirection(board, row, col, -1, -1, player) >= 4)
  8001aac:	78ba      	ldrb	r2, [r7, #2]
  8001aae:	78f9      	ldrb	r1, [r7, #3]
  8001ab0:	787b      	ldrb	r3, [r7, #1]
@@ -3582,7 +3589,6 @@ uint8_t checkWinOrTie(uint8_t board[6][7], uint8_t row, uint8_t col, uint8_t pla
  8001abc:	f7ff ff76 	bl	80019ac <countDirection>
  8001ac0:	4603      	mov	r3, r0
  8001ac2:	1c5c      	adds	r4, r3, #1
-            countDirection(board, row, col, -1, -1, player) >= 4)
  8001ac4:	78ba      	ldrb	r2, [r7, #2]
  8001ac6:	78f9      	ldrb	r1, [r7, #3]
  8001ac8:	787b      	ldrb	r3, [r7, #1]
@@ -3593,7 +3599,6 @@ uint8_t checkWinOrTie(uint8_t board[6][7], uint8_t row, uint8_t col, uint8_t pla
  8001ad2:	6878      	ldr	r0, [r7, #4]
  8001ad4:	f7ff ff6a 	bl	80019ac <countDirection>
  8001ad8:	4603      	mov	r3, r0
-    if (1 + countDirection(board, row, col, 1, 1, player) +
  8001ada:	4423      	add	r3, r4
  8001adc:	2b03      	cmp	r3, #3
  8001ade:	dd01      	ble.n	8001ae4 <checkWinOrTie+0xc2>
@@ -3601,7 +3606,7 @@ uint8_t checkWinOrTie(uint8_t board[6][7], uint8_t row, uint8_t col, uint8_t pla
  8001ae0:	2301      	movs	r3, #1
  8001ae2:	e03a      	b.n	8001b5a <checkWinOrTie+0x138>
 
-    if (1 + countDirection(board, row, col, -1, 1, player) +
+    if (1 + countDirection(board, row, col, -1, 1, player) + countDirection(board, row, col, 1, -1, player) >= 4)
  8001ae4:	78ba      	ldrb	r2, [r7, #2]
  8001ae6:	78f9      	ldrb	r1, [r7, #3]
  8001ae8:	787b      	ldrb	r3, [r7, #1]
@@ -3613,7 +3618,6 @@ uint8_t checkWinOrTie(uint8_t board[6][7], uint8_t row, uint8_t col, uint8_t pla
  8001af4:	f7ff ff5a 	bl	80019ac <countDirection>
  8001af8:	4603      	mov	r3, r0
  8001afa:	1c5c      	adds	r4, r3, #1
-            countDirection(board, row, col, 1, -1, player) >= 4)
  8001afc:	78ba      	ldrb	r2, [r7, #2]
  8001afe:	78f9      	ldrb	r1, [r7, #3]
  8001b00:	787b      	ldrb	r3, [r7, #1]
@@ -3624,7 +3628,6 @@ uint8_t checkWinOrTie(uint8_t board[6][7], uint8_t row, uint8_t col, uint8_t pla
  8001b0a:	6878      	ldr	r0, [r7, #4]
  8001b0c:	f7ff ff4e 	bl	80019ac <countDirection>
  8001b10:	4603      	mov	r3, r0
-    if (1 + countDirection(board, row, col, -1, 1, player) +
  8001b12:	4423      	add	r3, r4
  8001b14:	2b03      	cmp	r3, #3
  8001b16:	dd01      	ble.n	8001b1c <checkWinOrTie+0xfa>

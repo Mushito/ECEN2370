@@ -21,11 +21,13 @@ static uint8_t countDirection(uint8_t board[6][7], uint8_t startRow, uint8_t sta
 	uint8_t count = 0;
 	uint8_t r = startRow + chngRow;
 	uint8_t c = startCol + chngCol;
+
     while ((r >= 0) && (r < 6) && (c >= 0) && (c < 7) && (board[r][c] == player)) {
         count++;
         r += chngRow;
         c += chngCol;
     }
+
     return count;
 }
 
@@ -34,20 +36,16 @@ static uint8_t countDirection(uint8_t board[6][7], uint8_t startRow, uint8_t sta
 // 2 IS TIE
 // 0 NO WIN OR TIE, GAME STILL GOING
 uint8_t checkWinOrTie(uint8_t board[6][7], uint8_t row, uint8_t col, uint8_t player) {
-    if (1 + countDirection(board, row, col, 0, 1, player) +
-            countDirection(board, row, col, 0, -1, player) >= 4)
+    if (1 + countDirection(board, row, col, 0, 1, player) + countDirection(board, row, col, 0, -1, player) >= 4)
         return 1;
 
-    if (1 + countDirection(board, row, col, 1, 0, player) +
-            countDirection(board, row, col, -1, 0, player) >= 4)
+    if (1 + countDirection(board, row, col, 1, 0, player) + countDirection(board, row, col, -1, 0, player) >= 4)
         return 1;
 
-    if (1 + countDirection(board, row, col, 1, 1, player) +
-            countDirection(board, row, col, -1, -1, player) >= 4)
+    if (1 + countDirection(board, row, col, 1, 1, player) + countDirection(board, row, col, -1, -1, player) >= 4)
         return 1;
 
-    if (1 + countDirection(board, row, col, -1, 1, player) +
-            countDirection(board, row, col, 1, -1, player) >= 4)
+    if (1 + countDirection(board, row, col, -1, 1, player) + countDirection(board, row, col, 1, -1, player) >= 4)
         return 1;
 
     for (uint8_t r = 0; r < 6; r++) {

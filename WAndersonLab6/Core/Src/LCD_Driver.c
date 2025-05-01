@@ -319,8 +319,10 @@ void LCD_DrawGameBoard(uint8_t board[6][7]) {
             uint16_t y = BOARD_Y_START + row * (2 * CELL_RADIUS + CELL_SPACING);
             uint16_t color = COLOR_BG;
 
-            if (board[row][col] == 1) color = COLOR_PLAYER1;
-            else if (board[row][col] == 2) color = COLOR_PLAYER2;
+            if (board[row][col] == 1)
+            	color = COLOR_PLAYER1;
+            else if (board[row][col] == 2)
+            	color = COLOR_PLAYER2;
 
             LCD_Draw_Circle_Fill(x, y, CELL_RADIUS, COLOR_GRID);
             LCD_Draw_Circle_Fill(x, y, CELL_RADIUS - 3, color);

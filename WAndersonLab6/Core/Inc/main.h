@@ -28,6 +28,11 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
+#include "ApplicationCode.h"
+#include "LCD_Driver.h"
+#include "stmpe811.h"
+#include "game_state.h"
+#include "AI.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
