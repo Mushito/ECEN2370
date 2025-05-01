@@ -246,6 +246,11 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
 /* USER CODE BEGIN Private defines */
 #define PLAYER_1 0
 #define PLAYER_2 1
+
+#define ONE_PLAYER_MODE 1
+#define TWO_PLAYER_MODE 0
+
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

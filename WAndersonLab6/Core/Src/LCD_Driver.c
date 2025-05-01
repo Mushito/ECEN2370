@@ -361,6 +361,7 @@ void LCD_DrawGameOverScreen(uint8_t winner, uint8_t redWins, uint8_t yellowWins,
     LCD_Clear(0, COLOR_BG);
     LCD_SetFont(&Font16x24);
 
+    // === WINNER TITLE ===
     if (winner == 1) {
         LCD_SetTextColor(LCD_COLOR_RED);
         LCD_DisplayChar(40, 100, 'R');
@@ -386,14 +387,14 @@ void LCD_DrawGameOverScreen(uint8_t winner, uint8_t redWins, uint8_t yellowWins,
         LCD_DisplayChar(200, 100, 'N');
         LCD_DisplayChar(220, 100, 'S');
     }
-    else { // tie
+    else {
         LCD_SetTextColor(LCD_COLOR_BLACK);
         LCD_DisplayChar(100, 100, 'T');
         LCD_DisplayChar(120, 100, 'I');
         LCD_DisplayChar(140, 100, 'E');
     }
 
-    // Draw "Restart" below the winner line
+    // === RESTART ===
     LCD_SetTextColor(LCD_COLOR_BLACK);
     LCD_DisplayChar(60, 180, 'R');
     LCD_DisplayChar(80, 180, 'E');
@@ -402,7 +403,38 @@ void LCD_DrawGameOverScreen(uint8_t winner, uint8_t redWins, uint8_t yellowWins,
     LCD_DisplayChar(140, 180, 'A');
     LCD_DisplayChar(160, 180, 'R');
     LCD_DisplayChar(180, 180, 'T');
+
+    // === GAME STATS (SMALL FONT) ===
+    LCD_SetFont(&Font12x12);
+    LCD_SetTextColor(LCD_COLOR_BLACK);
+
+    char buffer[16];
+    uint16_t y = 210;
+    uint16_t x;
+
+    // Red Wins
+    sprintf(buffer, "Red Wins: %d", redWins);
+    x = 60;
+    for (uint8_t i = 0; buffer[i] != '\0'; i++) {
+        LCD_DisplayChar(x + i * 8, y, buffer[i]);
+    }
+
+    // Yellow Wins
+    sprintf(buffer, "Yellow Wins: %d", yellowWins);
+    y += 14;
+    for (uint8_t i = 0; buffer[i] != '\0'; i++) {
+        LCD_DisplayChar(x + i * 8, y, buffer[i]);
+    }
+
+    // Elapsed Time
+    sprintf(buffer, "Time: %ds", elapsedTime);
+    y += 14;
+    for (uint8_t i = 0; buffer[i] != '\0'; i++) {
+        LCD_DisplayChar(x + i * 8, y, buffer[i]);
+    }
 }
+
+
 
 
 

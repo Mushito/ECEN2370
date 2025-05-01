@@ -13,7 +13,7 @@
 #include "AI.h"
 
 
-uint8_t placeCoin(uint8_t board[6][7], uint8_t col, uint8_t player);
+int8_t placeCoin(uint8_t board[6][7], uint8_t col, uint8_t player);
 
 uint8_t checkWinOrTie(uint8_t board[6][7], uint8_t row, uint8_t col, uint8_t player);
 

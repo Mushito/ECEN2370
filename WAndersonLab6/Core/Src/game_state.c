@@ -7,8 +7,8 @@
 
 #include "game_state.h"
 
-uint8_t placeCoin(uint8_t board[6][7], uint8_t col, uint8_t player) {
-    for (uint8_t row = 5; row >= 0; row--) {
+int8_t placeCoin(uint8_t board[6][7], uint8_t col, uint8_t player) {
+    for (int8_t row = 5; row >= 0; row--) {
         if (board[row][col] == 0) {
             board[row][col] = player;
             return row;
@@ -50,7 +50,6 @@ uint8_t checkWinOrTie(uint8_t board[6][7], uint8_t row, uint8_t col, uint8_t pla
             countDirection(board, row, col, 1, -1, player) >= 4)
         return 1;
 
-    // CHECK TIE
     for (uint8_t r = 0; r < 6; r++) {
         for (uint8_t c = 0; c < 7; c++) {
             if (board[r][c] == 0)
