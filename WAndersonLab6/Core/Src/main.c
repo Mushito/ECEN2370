@@ -187,6 +187,8 @@ int main(void)
                       if (outcome == 1) {
                           winner   = AI_PLAYER;
                           gameOver = 1;
+
+                          yellowWins++;
                       } else if (outcome == 2) {
                           winner   = 0;
                           gameOver = 1;
